@@ -460,7 +460,7 @@ spec:
       mgr:
         disabled: false
       osd:
-        disabled: true
+        disabled: false
     # Change pod startup probe timing or threshold values. Works for all mon,mgr,osd daemons.
     startupProbe:
       mon:
