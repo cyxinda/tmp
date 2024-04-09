@@ -1,5 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "kds schema",
+  "description": "描述kds实体规约",
   "type": "object",
   "properties":{
     "schema_version": {
@@ -20,17 +22,163 @@
       "properties": {
         "kds_id": {
           "$ref": "#/definitions/kds_id"
+        },
+        "kds_name_zh": {
+          "$ref": "#/definitions/kds_name_zh"
+        },
+        "kds_name_en": {
+          "$ref": "#/definitions/kds_name_en"
+        },
+        "kds_version": {
+          "$ref": "#/definitions/kds_version"
+        },
+        "kds_owner": {
+          "$ref": "#/definitions/kds_owner"
+        },
+        "kds_desc": {
+          "$ref": "#/definitions/kds_desc"
+        },
+        "bsg_type": {
+          "$ref":  "#/definitions/domain"
         }
       },
       "required": [
-        "kds_id"        
+        "kds_id",
+        "kds_name_zh",
+        "kds_name_en",
+        "kds_version",
+        "kds_owner",
+        "kds_desc",
+        "bsg_type"
       ]
+    },
+    "domain":{
+      "type":"object",
+      "properties": {
+        "dialog_domain": { "$ref":  "#/definitions/dialog_domain"},
+        "knowla_domain": { "$ref":  "#/definitions/knowla_domain"},
+        "data_domain": { "$ref":  "#/definitions/data_domain"},
+        "flow_domain": { "$ref":  "#/definitions/flow_domain"},
+        "ai_namespace": { "$ref":  "#/definitions/ai_namespace"},
+        "common_namespace": { "$ref":  "#/definitions/common_namespace"}
+      },
+      "oneOf": [
+        {"required": ["dialog_domain"]},
+        {"required": ["knowla_domain"]},
+        {"required": ["data_domain"]},
+        {"required": ["flow_domain"]},
+        {"required": ["ai_namespace"]},
+        {"required": ["common_namespace"]}
+      ]
+    },
+    "dialog_domain": {
+      "type": "string",
+      "enum": ["知识图谱构建BSG","图谱数据处理BSG","图谱平台应用BSG"],
+      "minLength": 1,
+      "maxLength": 64,
+      "default":"知识图谱构建BSG",
+      "title": "智能对话子领域",
+      "description": "包括：\n\r\t\t知识图谱构建BSG\r\t\t图谱数据处理BSG\r\t\t图谱平台应用BSG"
+    },
+    "knowla_domain": {
+      "type": "string",
+      "enum": ["对话接口BSG","核心对话BSG","文本理解BSG","呼叫中心BSG","语音机器人"],
+      "minLength": 1,
+      "maxLength": 64,
+      "default":"对话接口BSG",
+      "title": "知识智能子领域",
+      "description": "包括：\n\r\t\t对话接口BSG\r\t\t核心对话BSG\r\t\t文本理解BSG\r\t\t呼叫中心BSG\r\t\t语音机器人"
+    },
+    "data_domain": {
+      "type": "string",
+      "enum": ["供应链配件预测BSG","智慧门店数据统计BSG","财务系统的自动填报BSG","公共信息获取BSG（爬虫平台）","数据采集BSG","数据仓库BSG","数据处理BSG","数据质量BSG","数据分析BSG","元数据治理BSG"],
+      "minLength": 1,
+      "maxLength": 64,
+      "default":"供应链配件预测BSG",
+      "title": "数据智能子领域",
+      "description": "包括：\n\r\t\t供应链配件预测BSG\r\t\t智慧门店数据统计BSG\r\t\t财务系统的自动填报BSG\r\t\t公共信息获取BSG（爬虫平台）\r\t\t数据采集BSG\r\t\t数据仓库BSG\r\t\t数据处理BSG\r\t\t数据质量BSG\r\t\t数据分析BSG\r\t\t元数据治理BSG"
+    },
+    "flow_domain": {
+      "type": "string",
+      "enum": ["服务交付BSG(Scello)","数据标注BSG","服务生成BSG（MEI）","创投项目管理BSG","微信商城BSG"],
+      "minLength": 1,
+      "maxLength": 64,
+      "default":"服务交付BSG(Scello)",
+      "title": "流程智能子领域",
+      "description": "包括：\n\r\t\t服务交付BSG(Scello)\r\t\t数据标注BSG\r\t\t服务生成BSG（MEI）\r\t\t创投项目管理BSG\r\t\t微信商城BSG"
+    },
+    "ai_namespace": {
+      "type": "string",
+      "enum": ["能力集成BSG","文本生成BSG","语义识别BSG","图片语义BSG","图像识别BSG","目标检测BSG","图像处理"],
+      "minLength": 1,
+      "maxLength": 64,
+      "default":"能力集成BSG",
+      "title": "AI服务空间",
+      "description": "包括：\n\r\t\t能力集成BSG\r\t\t文本生成BSG\r\t\t语义识别BSG\r\t\t图片语义BSG\r\t\t图像识别BSG\r\t\t目标检测BSG\r\t\t图像处理"
+    },
+    "common_namespace": {
+      "type": "string",
+      "enum": ["通信服务 BSG","系统监控BSG","日志服务BSG","资源处理BSG"],
+      "minLength": 1,
+      "maxLength": 64,
+      "default":"通信服务 BSG",
+      "title": "通用服务空间",
+      "description": "包括：\n\r\t\t通信服务 BSG\r\t\t系统监控BSG\r\t\t日志服务BSG\r\t\t资源处理BSG"
     },
     "kds_id": {
       "type": "string",
-      "pattern": "^[a-z0-9-]+.[a-z0-9-]+$",
+      "pattern": "^[A-Za-z0-9-_$]+$",
       "minLength": 32,
-      "maxLength": 32
+      "maxLength": 64,
+      "default":"80d2fffe-f57c-11ee-a78c-cd590b556695",
+      "title": "kds_id uuid",
+      "description": "一个32位到64位的随机数，不能与其他kds实体重复"
+    },
+    "kds_name_zh": {
+      "title": "kds_name中文标识",
+      "description": "kds_name中文标识，长度在1到16字符",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 16,
+      "default":"诺谛的xx项目"
+    },
+    "kds_name_en": {
+      "title": "kds_name英文标识",
+      "description": "kds_name英文标识，长度在1到64字符，可以包含数字、字母、下划线和$",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9-_$]+$",
+      "minLength": 1,
+      "maxLength": 64,
+      "default":"knowdee-kds-xx-project"
+    },
+    "kds_version": {
+      "title": "kds的版本号",
+      "description": "kds的版本好，形如x.y.z.timestamp",
+      "type": "string",
+      "pattern": "^([0-9]+.){3}[0-9]+$",
+      "minLength": 1,
+      "maxLength": 64,
+      "default": "10.0.0.timestamp"
+    },
+    "kds_owner": {
+      "title": "kds的所属关系",
+      "description": "kds_的所属关系，形如：[\"caoyong@knowdee.com\",\"caohw@knowdee.com\"]",
+      "type": "array",
+      "items": {
+        "type":"string",
+        "pattern": "^[A-Za-z_$][a-z0-9-@.$]*$",
+        "minLength": 1,
+        "maxLength": 64,
+        "default": "xxx@knowdee.com"
+      }      
+    },
+    "kds_desc": {
+      "title": "kds的汉字描述",
+      "description": "小于1024汉字的描述",
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 1024,
+      "default": "kds的汉字描述，小于1024字符"
     }
   }
 }
