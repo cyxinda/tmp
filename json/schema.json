@@ -213,7 +213,7 @@
 					"$ref": "#/definitions/protocol_type"
 				},
 				"start_params": {
-          "$ref": "#/definitions/params"
+					"$ref": "#/definitions/params"
 				},
 				"stop_params": {
 					"$ref": "#/definitions/params"
@@ -223,7 +223,7 @@
 				},
 				"observablity": {
 					"$ref": "#/definitions/observablity",
-          "$comment": "TODO: 这个定义不太好，待定吧"
+					"$comment": "TODO: 这个定义不太好，待定吧"
 				},
 				"health_check": {
 					"$ref": "https://kubernetesjsonschema.dev/v1.14.0/_definitions.json#/definitions/io.k8s.api.core.v1.Probe"
@@ -241,36 +241,40 @@
 				"health_check"
 			]
 		},
-    "params":{
-      "items": {
-        "type": "string"
-      },
-      "type": "array",
-      "description": "参数列表",
-      "$comment": "TODO 这个地方是不是应该定义成一个object？"
-    },
-    "ui_support": {
-      "enum": ["gui","cli",null],
+		"observablity": {
+			"type": "object",
+			"$comment": "TODO 可观测性，不应该在此处定义上传的span schema，应该在此处定义使用的可观测性工具集？；TODO 目前span的schema是yaml格式的，需要转换；TODO 需要添加公司的schema web服务；"
+		},
+		"params": {
+			"items": {
+				"type": "string"
+			},
+			"type": "array",
+			"description": "参数列表",
+			"$comment": "TODO 这个地方是不是应该定义成一个object？"
+		},
+		"ui_support": {
+			"enum": ["gui", "cli", null],
 			"default": "gui",
 			"title": "ui支持",
 			"description": "包括：\n\r\t\tgui:图形化ui\r\t\tcli:命令行终端\r\t\tnull:无ui（端口调用）",
-      "$comment": "TODO 待完善列表"
-		},       
-    "task_type": {
+			"$comment": "TODO 待完善列表"
+		},
+		"task_type": {
 			"type": "string",
-      "enum": ["scheduler","front","backend"],
+			"enum": ["scheduler", "front", "backend"],
 			"default": "backend",
 			"title": "服务类型",
 			"description": "包括：\n\r\t\tscheduler:定时任务\r\t\tfront:前端项目\r\t\tbackend:后端服务",
-      "$comment": "TODO 待完善列表"
-		},    
-    "protocol_type": {
+			"$comment": "TODO 待完善列表"
+		},
+		"protocol_type": {
 			"type": "string",
-      "enum": ["http","socket","grpc"],
-			"default": "backend",
+			"enum": ["http", "socket", "grpc"],
+			"default": "http",
 			"title": "服务类型",
 			"description": "包括：\n\r\t\thttp协议\r\t\tsocket协议\r\t\tgrpc协议",
-      "$comment": "TODO 最好与port合并；TODO 待完善列表"
+			"$comment": "TODO 最好与port合并；TODO 待完善列表"
 		},
 		"dyn_ip": {
 			"type": "string",
@@ -306,15 +310,15 @@
 				},
 				"port": {
 					"type": "integer",
-					"format": "int32" ,
-          "maximum": 60000,
-          "minimum": 1025,
+					"format": "int32",
+					"maximum": 60000,
+					"minimum": 1025,
 					"default": 8080,
 					"title": "端口",
 					"description": "kds应用运行时占用的端口"
 				}
 			},
-      "required": ["name","port"],
+			"required": ["name", "port"],
 			"default": {
 				"name": "http",
 				"port": 80
@@ -325,22 +329,135 @@
 		"quality_attributes": {
 			"type": "object",
 			"properties": {
-				"in_api": {
-					"$ref": "#/definitions/in_api"
+				"hw_require": {
+					"type": "boolean",
+					"default": false,
+					"title": "是否需要GPU",
+					"description": "true or false"
 				},
-				"out_api": {
-					"$ref": "#/definitions/out_api"
+				"concurrency": {
+					"type": "integer",
+					"format": "int32",
+					"default": 200,
+					"title": "并发量",
+					"description": "QPS"
 				},
-				"dyn_config": {
-					"$ref": "#/definitions/dyn_config"
+				"resources": {
+					"type": "object",
+					"properties": {
+						"limits": {
+							"type": "object",
+							"properties": {
+								"cpu": {
+									"$ref": "#/definitions/cpu"
+								},
+								"memory": {
+									"$ref": "#/definitions/memory"
+								},
+								"bandwidth": {
+									"$ref": "#/definitions/bandwidth"
+								}
+							},
+							"default": {
+								"cpu": "200m",
+								"memory": "256M",
+								"bandwidth": "5Mb"
+							},
+							"title": "资源限制情况",
+							"description": "cpu、内存、带宽"
+						},
+						"request": {
+							"type": "object",
+							"properties": {
+								"cpu": {
+									"$ref": "#/definitions/cpu"
+								},
+								"memory": {
+									"$ref": "#/definitions/memory"
+								}
+							},
+							"default": {
+								"cpu": "200m",
+								"memory": "256M"
+							},
+							"title": "资源申请情况",
+							"description": "cpu、内存"
+						}
+					},
+					"$comment": "TODO 与env_thredhold定义重复，待定"
+				},
+				"dyn_security": {
+					"$ref": "#/definitions/dyn_security"
+				},
+				"latency": {
+					"$ref": "#/definitions/latency"
+				},
+				"env_thredhold": {
+					"type": "object",
+					"properties": {
+						"cpu": {
+							"$ref": "#/definitions/cpu"
+						},
+						"memory": {
+							"$ref": "#/definitions/memory"
+						}
+					},
+					"default": {
+						"cpu": "200m",
+						"memory": "256M"
+					},
+					"title": "资源申请情况",
+					"description": "cpu、内存",
+					"$comment": "TODO 与上面的limits定义重复，待定"
 				}
 			},
 			"additionalProperties": false,
 			"required": [
-				"in_api",
-				"out_api",
-				"dyn_config"
+				"hw_require",
+				"latency",
+				"env_thredhold", "dyn_security", "concurrency"
 			]
+		},
+		"latency": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"api_name": {
+						"type": "string",
+						"default": "api_name",
+						"title": "api名称",
+						"description": "阐述api处理延时情况",
+						"$comment": "TODO 是不是应该在in_api和out_api中定义？"
+					},
+					"time": {
+						"type": "integer",
+						"default": 100,
+						"title": "延时",
+						"description": "单位毫秒"
+					}
+				}
+			}
+		},
+		"dyn_security": {
+			"type": "object",
+			"properties": {
+				"secret": {
+					"type": "string",
+					"format": "uri"
+				},
+				"certificate": {
+					"type": "string",
+					"format": "uri"
+				}
+			},
+			"default": {
+				"certificate": "file:/tmp/certificate.pem",
+				"secret": "file:/tmp/secret.txt"
+			},
+			"title": "证书 或 密钥的位置列表",
+			"description": "证书 或 密钥的位置列表",
+			"$comment": "TODO 定义缺少信息，待定"
 		},
 		"in_api": {
 			"type": "array",
@@ -365,7 +482,7 @@
 						"$ref": "#/definitions/field"
 					},
 					"description": {
-						"$ref": "#/definitions/description"
+						"$ref": "#/definitions/describe"
 					},
 					"method_uri": {
 						"$ref": "#/definitions/method_uri"
@@ -376,6 +493,34 @@
 		},
 
 
+
+		"bandwidth": {
+			"type": "string",
+			"pattern": "^([1-9][0-9]*)(Mb|Gb|M|G)$",
+			"title": "带宽占用",
+			"description": "形如5Mi、5Gi、5G、5M",
+			"default": "5M"
+		},
+		"memory": {
+			"type": "string",
+			"pattern": "^([1-9][0-9]*)(MB|GB|M|G|Mi|Gi)$",
+			"title": "内存占用",
+			"description": "形如5Mi、5Gi、5G、5M、5GB、5MB",
+			"default": "5M"
+		},
+		"cpu": {
+			"type": "string",
+			"oneOf": [{
+				"pattern": "^([1-9][0-9]*)(m)$"
+			}, {
+				"pattern": "^([1-9].[0-9]*)$"
+			}, {
+				"pattern": "^([1-9][0-9]*)$"
+			}],
+			"title": "cpu占用",
+			"description": "形如：\n\r\t\t2：每秒占用2个cpu\r\t\t1.5：每秒占用1.5个cpu\r\t\t200m：每秒占用200毫秒个时间片",
+			"default": "200m"
+		},
 		"attributes": {
 			"type": "object",
 			"properties": {
@@ -609,7 +754,7 @@
 			"title": "配置字段名称",
 			"description": "可以包含大小写英文字母,-,_,$"
 		},
-		"description": {
+		"describe": {
 			"type": "string",
 			"minLength": 1,
 			"maxLength": 64,
